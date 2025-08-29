@@ -1,11 +1,8 @@
 import "~/styles/globals.css";
-
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-import {
-  ClerkProvider
-} from '@clerk/nextjs'
-import {TopNav} from "./_components/topnav";
+import { ClerkProvider, SignedOut } from "@clerk/nextjs";
+import { TopNav } from "./_components/topnav";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -22,12 +19,27 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
-    <html lang="en" className={`${geist.variable}`}>
-      <body>
-        <TopNav />
-        {children}</body>
-    </html>
+    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+      <html lang="en" className={geist.variable}>
+        <body
+          className="min-h-screen bg-cover bg-center text-yellow-100"
+          style={{ backgroundImage: "url('/bg1.jpg')" }}
+        >
+          <TopNav />
+
+          {/* Show centered sign-in message if not signed in */}
+          <SignedOut>
+            <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
+              <h1 className="text-3xl font-bold text-white text-center bg-black/50 px-6 py-4 rounded-lg shadow-md">
+                Please Sign In First
+              </h1>
+            </div>
+          </SignedOut>
+
+          {/* Main page content when signed in */}
+          {children}
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
