@@ -3,6 +3,12 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ClerkProvider, SignedOut, SignedIn } from "@clerk/nextjs";
 import { TopNav } from "./_components/topnav";
+import { SignOutButton } from "@clerk/nextjs";
+
+<SignOutButton redirectUrl="/">
+  <button>Sign Out</button>
+</SignOutButton>
+
 
 export const metadata: Metadata = {
   title: "API Hub | Create T3 App",
@@ -19,7 +25,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      appearance={{}}
+      afterSignOutUrl="/"   // 👈 add this line
+    >
       <html lang="en" className={geist.variable}>
         <body
           className="min-h-screen bg-cover bg-center text-yellow-100"
@@ -27,33 +37,17 @@ export default function RootLayout({
         >
           <TopNav />
 
-          {/* Show centered sign-in message if not signed in */}
+          {/* Homepage visible only when SignedOut */}
           <SignedOut>
-            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] px-4 text-center">
-              <h1 className="text-4xl font-extrabold text-white bg-black/50 px-6 py-4 rounded-lg shadow-md mb-4">
-                Please Sign In First
-              </h1>
-              <p className="max-w-xl text-lg text-yellow-200 bg-black/40 px-4 py-2 rounded-md">
-                Welcome to <span className="font-semibold">API Hub</span> – your
-                one-stop solution to explore, test, and integrate APIs.  
-                Sign in to unlock features like API request testing,
-                documentation, and personalized tools.
-              </p>
-            </div>
-          </SignedOut>
-
-          {/* Homepage feel when signed in */}
-          <SignedIn>
-            <main className="flex flex-col items-center justify-start min-h-[calc(100vh-64px)] px-6 py-12 space-y-10 bg-black/40 backdrop-blur-md">
+            <main className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] px-6 py-12 space-y-10 bg-black/40 backdrop-blur-md text-center">
               <section className="text-center max-w-3xl">
                 <h1 className="text-5xl font-bold mb-4">
                   Welcome to <span className="text-yellow-300">API Hub</span>
                 </h1>
                 <p className="text-lg text-yellow-100 leading-relaxed">
-                  Explore a collection of APIs designed for developers, students,
-                  and hobbyists. From authentication to data management,
-                  everything is ready for you to try out and integrate into your
-                  projects.
+                  Your one-stop solution to explore, test, and integrate APIs.  
+                  Sign in to unlock features like API request testing,
+                  documentation, and personalized tools.
                 </p>
               </section>
 
@@ -81,14 +75,16 @@ export default function RootLayout({
                 </div>
               </section>
 
-              <footer className="text-sm text-yellow-300 opacity-80">
+              <footer className="text-sm text-yellow-300 opacity-80 mt-6">
                 © {new Date().getFullYear()} API Hub. All rights reserved.
               </footer>
             </main>
-          </SignedIn>
+          </SignedOut>
 
-          {/* Main page content (children) */}
-          {children}
+          {/* Children content visible only when SignedIn */}
+          <SignedIn>
+            {children}
+          </SignedIn>
         </body>
       </html>
     </ClerkProvider>
