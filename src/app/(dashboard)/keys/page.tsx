@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { BookOpen, Plus } from "lucide-react";
+import { BookOpen, Plus, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import CopyButton from "~/components/copy-button";
@@ -91,20 +91,34 @@ export default function KeysPage() {
 
       {/* Content */}
       <div className="relative z-10 p-8 space-y-8">
+        
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white flex items-center gap-2">
             🔑 API Key Manager
           </h1>
-          <Link href="/docs">
+          
+          {/* Action Buttons Container sa Kanang Itaas */}
+          <div className="flex items-center gap-3">
+            {/* 🚀 BAGONG BUTTON: Tatalon diretso sa pangalawang website (sir-dave) */}
             <Button
-              variant="outline"
-              className="flex items-center gap-2 rounded-lg border-gray-300 bg-white/80 text-base text-gray-700 shadow-sm hover:bg-blue-600 hover:text-white transition"
+              onClick={() => window.location.href = "http://localhost:3001"}
+              className="flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-base text-white shadow-md transition font-medium border border-blue-500"
             >
-              <BookOpen className="h-5 w-5" />
-              API Documentation
+              <ExternalLink className="h-5 w-5" />
+              Launch Tester App
             </Button>
-          </Link>
+
+            <Link href="/docs">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 rounded-lg border-gray-300 bg-white/80 text-base text-gray-700 shadow-sm hover:bg-gray-100 transition"
+              >
+                <BookOpen className="h-5 w-5" />
+                API Documentation
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Card Section: stacked vertically */}
@@ -121,17 +135,26 @@ export default function KeysPage() {
                 <CardHeader>
                   <CardTitle className="text-lg text-white">Your New API Key</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                   <p className="text-sm text-gray-200">Here is your API Key (visible once):</p>
-                  <div className="mt-2 flex items-center gap-2 bg-white/90 p-2 rounded-md">
+                  <div className="flex items-center gap-2 bg-white/90 p-2 rounded-md">
                     <code className="font-mono text-sm break-all text-gray-900">
                       {justCreated.key}
                     </code>
                     <CopyButton value={justCreated.key} />
                   </div>
-                  <p className="mt-2 text-xs text-gray-300">
+                  <p className="text-xs text-gray-300">
                     💡 Save this key securely. You won’t be able to see it again.
                   </p>
+                  
+                  {/* Shortcut Button: Diretso test sa sir-dave habang bitbit ang bagong gawang key sa URL parameters */}
+                  <Button
+                    onClick={() => window.location.href = `http://localhost:3001/?key=${justCreated.key}`}
+                    className="w-full mt-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg flex items-center justify-center gap-2 font-medium transition"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Test this key on SIR-DAVE Tester 🚀
+                  </Button>
                 </CardContent>
               </div>
             </Card>
