@@ -1,20 +1,22 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// I-define ang mga public routes (routes na hindi kailangan ng login)
+// I-define ang mga routes na pwedeng puntahan ng hindi naka-login
 const isPublicRoute = createRouteMatcher([
   '/', 
   '/sign-in(.*)', 
   '/sign-up(.*)', 
   '/api/ping', 
-  '/api/echo' // Siguraduhin na ang API routes ay accessible kung kailangan
+  '/api/echo'
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  // 1. I-await ang auth() dahil isa itong Promise
   const session = await auth();
 
-  // Protektahan ang lahat ng routes maliban sa public routes
+  // 2. Gamitin ang session.userId para i-check ang authentication
   if (!isPublicRoute(req) && !session.userId) {
+    // 3. Gamitin ang session.redirectToSignIn para i-redirect ang user
     return session.redirectToSignIn();
   }
   
@@ -23,9 +25,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and static files
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
     '/(api|trpc)(.*)',
   ],
 };
